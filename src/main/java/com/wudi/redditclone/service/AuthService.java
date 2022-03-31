@@ -2,6 +2,7 @@ package com.wudi.redditclone.service;
 
 
 import com.wudi.redditclone.dto.RegisterDTO;
+import com.wudi.redditclone.model.NotificationEmail;
 import com.wudi.redditclone.model.User;
 import com.wudi.redditclone.model.VerificationToken;
 import com.wudi.redditclone.repo.UserRepo;
@@ -23,6 +24,7 @@ public class AuthService {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepo verificationTokenRepo;
+    private final MailService mailService;
 
 
     @Transactional
@@ -36,6 +38,8 @@ public class AuthService {
         userRepo.save(user);
 
         String token = generateToken(user);
+        mailService.sendMail(new NotificationEmail("Account Activation",user.getEmail(),"Please click on the link to activate your account:" +
+                "http://localhost:8080/api/auth/accountVerification/"+token));
     }
 
     private String generateToken(User user){
